@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+
+
+<!-- ////////////////////////////////////////////////////////////////////////// -->
+<!-- HEAD ///////////////////////////////////////////////////////////////////// -->
+<!-- ////////////////////////////////////////////////////////////////////////// -->
+
+
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Anna's Scentsy Hub</title>
+
+  <link href="global.css" rel="stylesheet" type="text/css" />
+  <script type="module" , src="script.js"></script>
+
+  <!-- To make Google Icons (below) filled, change 2nd to last 0 to 1 -->
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+</head>
+
+
+
+<!-- ////////////////////////////////////////////////////////////////////////// -->
+<!-- BODY ///////////////////////////////////////////////////////////////////// -->
+<!-- ////////////////////////////////////////////////////////////////////////// -->
+
+
+
+<body>
+
+  <div class="V1GLOBAL_LoadingDiv">
+    <img src="./sfts_logo.png"></img>
+  </div>
+
+
+
+  <!-- ////////////////////////////////////////////////////////////////////////// -->
+  <!-- Dashboard //////////////////////////////////////////////////////////////// -->
+  <!-- ////////////////////////////////////////////////////////////////////////// -->
+
+
+
+  <div class="page" id="ordersDEFAULT" style="justify-content: center;">
+    <p class="title">Scents for the Soul</p>
+    <div class="section">
+      <button class="sectionButton sectionTitle" page="/">Home Page</button>
+      <button class="sectionButton sectionTitle" page="function:NewOrder">Enter New Order</button>
+    </div>
+  </div>
+
+
+
+  <!-- ////////////////////////////////////////////////////////////////////////// -->
+  <!-- New Order Page /////////////////////////////////////////////////////////// -->
+  <!-- ////////////////////////////////////////////////////////////////////////// -->
+
+
+
+  <div class="page" id="ordersNEWORDER" style="display: none; justify-content: center;">
+    <p class="title">New Order</p>
+    <div class="section">
+      <button class="sectionButton sectionTitle" page="function:SubmitNewOrder">Submit New Order</button>
+      <button class="sectionButton sectionTitle" page="function:BackOrder">Cancel New Order</button>
+    </div>
+    <div class="section">
+      <p class="sectionSubTitle">Order Number:</p>
+      <textarea class="sectionTextBox" id="orders-newOrder-orderNumber" type="text" value=""></textarea>
+
+      <p class="sectionSubTitle">Customer Name:</p>
+      <textarea class="sectionTextBox" id="orders-newOrder-customerName" type="text" value=""></textarea>
+
+      <p class="sectionSubTitle">Products Ordered:</p>
+      <textarea class="sectionTextBox" id="orders-newOrder-products" type="text" value=""
+        style="height: 10em; overflow-y: auto;"></textarea>
+
+      <p class="sectionSubTitle" style="height: 35px; display: inline-block;">Paid?</p>
+      <label class="sectionToggle" id="orders-newOrder-paid">
+        <input type="checkbox" id="toggleSwitch">
+        <span class="slider"></span>
+      </label>
+
+      <p class="sectionSubTitle">Date Ordered:<p>
+      <input type="date" class="sectionDateBox" id="orders-newOrder-dateOrdered">
+    </div>
+  </div>
+
+
+
+  <!-- ////////////////////////////////////////////////////////////////////////// -->
+  <!-- View Order Page ////////////////////////////////////////////////////////// -->
+  <!-- ////////////////////////////////////////////////////////////////////////// -->
+
+
+
+  <div class="page" id="ordersVIEWORDER" style="display: none; justify-content: center;">
+    <p class="title">View Order</p>
+    <div class="section">
+      <button class="sectionButton sectionTitle" page="function:UpdateOrder">Update Order</button>
+      <button class="sectionButton sectionTitle" page="function:DeleteOrder">Delete Order</button>
+      <button class="sectionButton sectionTitle" page="function:BackOrder">Back</button>
+    </div>
+    <div class="section">
+      <p class="sectionSubTitle">Order Number:</p>
+      <textarea class="sectionTextBox" id="orders-newOrder-orderNumber" type="text" value=""></textarea>
+
+      <p class="sectionSubTitle">Customer Name:</p>
+      <textarea class="sectionTextBox" id="orders-newOrder-customerName" type="text" value=""></textarea>
+
+      <p class="sectionSubTitle">Products Ordered:</p>
+      <textarea class="sectionTextBox" id="orders-newOrder-products" type="text" value=""
+        style="height: 10em; overflow-y: auto;"></textarea>
+
+      <p class="sectionSubTitle" style="height: 35px; display: inline-block;">Paid?</p>
+      <label class="sectionToggle" id="orders-newOrder-paid">
+        <input type="checkbox" id="toggleSwitch">
+        <span class="slider"></span>
+      </label>
+
+      <p class="sectionSubTitle">Date Ordered:<p>
+      <input type="date" class="sectionDateBox" id="orders-newOrder-dateOrdered">
+    </div>
+  </div>
+
+
+
+  <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+  <!-- Snowflakes ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+  <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+  <!-- <div id="snowflakes-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999999"</div>
+  <script>
+  (function() {
+    const snowflakeChars = "❄"; // Unicode snowflake
+    const maxSnowflakes = 50;   // Limit number of snowflakes on screen
+  
+    function createSnowflake() {
+      const snowflake = document.createElement("div");  snowflake.classList.add("snowflake");  snowflake.textContent = snowflakeChar;
+      // Random horizontal position
+      snowflake.style.left = Math.random() * window.innerWidth + "px";
+      // Random size
+      const size = Math.random() * 20 + 10;  snowflake.style.fontSize = size + "px"; // 10px to 30px 
+      // Random animation duration
+      const duration = Math.random() * 5 + 5;  snowflake.style.animationDuration = duration + "s"; // 5s to 10s
+      // Random horizontal drift
+      snowflake.style.animationDelay = Math.random() * 5 + "s";
+      document.getElementById("snowflakes-container").appendChild(snowflake);
+      // Remove snowflake after animation ends
+      setTimeout(() => {  snowflake.remove();  }, duration * 1000);  
+    }
+    // Create snowflakes at intervals
+    //if on mobile
+    if (window.innerWidth < 768) {
+      setInterval(() => {
+        if (document.querySelectorAll(".snowflake").length < maxSnowflakes) {
+          createSnowflake();
+        }
+      }, 400);
+    //if on desktop
+    } else if (window.innerWidth > 768) {
+      setInterval(() => {
+        if (document.querySelectorAll(".snowflake").length < maxSnowflakes) {
+          createSnowflake();
+        }
+      }, 200);
+    }
+  
+  })();
+  </script>
+  <style> 
+    body {  background: linear-gradient(#00111a, #00334d);  height: 1;  }
+    /* Snowflake style */
+    .snowflake {  position: fixed;  top: -50px;  color: white;  font-size: 1em;  user-select: none;  pointer-events: none;  animation-name: fall;  animation-timing-function: linear;  }
+    /* Falling animation */
+    @keyframes fall {  0% {  transform: translateY(0) rotate(0deg);  opacity: 1;  }  100% {  transform: translateY(100vh) rotate(360deg);  opacity: 0.01;  }  }
+  </style> -->
+
+</body>
+
+</html>

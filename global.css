@@ -1,0 +1,472 @@
+/* ////////////////////////////////////////////////////////////////////////// */
+/* IMPORTS AND LOADING ////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
+
+@import url('https://fonts.googleapis.com/css2?family=Delius+Unicase:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Nunito:wght@200..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: inherit;
+}
+
+body {
+  background: var(--colMed);
+  height: 100vh;
+  font-family: "Delius Unicase", cursive;
+  overflow: hidden;
+  transition: background-color 0.5s ease-in-out;
+}
+
+:root {
+  --colDark: #222;
+  --colSemiDark: #333;
+  --colMed: #444;
+  --colLight: #555;
+  --colDimmed: #bbb;
+  --colTheme: #dd99aa;
+  --colNorm: #fff;
+
+  --colSuccess: #4CAF50;
+  --colError: #D32F2F;
+}
+
+
+
+/* ////////////////////////////////////////////////////////////////////////// */
+/* Global /////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
+
+
+
+/* */
+
+
+
+/* ////////////////////////////////////////////////////////////////////////// */
+/* Loading /////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
+
+
+
+.V1GLOBAL_LoadingDiv {
+  position: fixed;
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--colTheme);
+  transition: width 1s cubic-bezier(0.74, 0.1, 0.27, 0.83);
+  overflow: hidden;
+  z-index: 999;
+  justify-content: center;
+  align-items: center;
+}
+
+.V1GLOBAL_LoadingDiv img {
+  position: absolute;
+  width: 350px !important;
+  height: 350px !important;
+  transform: translateX(-50%);
+  left: 50vw;
+}
+
+.V1GLOBAL_LoadingDivAnimation {
+  animation: V1GLOBAL_LoadingDivAnimation 1s ease 0s 1 normal none;
+}
+
+@keyframes V1GLOBAL_LoadingDivAnimation {
+  0% {
+    transform: scale(1) translateX(-50%);
+  }
+
+  50% {
+    transform: scale(1.1) translateX(-45%);
+  }
+
+  100% {
+    transform: scale(1) translateX(-50%);
+  }
+}
+
+
+
+/* ////////////////////////////////////////////////////////////////////////// */
+/* PAGES //////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
+
+
+
+.page {
+  position: absolute;
+  transition: opacity 0.3s ease-in-out;
+
+  min-height: 500px;
+  height: fit-content;
+  width: 100vw !important;
+
+  /* left: 86px; */
+  padding: 15px;
+  padding-top: 77.5px;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: flex-start;
+  gap: 10px;
+}
+
+.section {
+  /*min-height: 100px;*/
+  width: 100%;
+  background-color: var(--colMed);
+  border: 3px solid var(--colSemiDark);
+  border-radius: 15px;
+  padding: 10px;
+}
+
+.sectionGroup {
+  display: flex;
+  gap: 9px
+}
+
+.title {
+  position: fixed;
+  width: 100%;
+  top: 0px;
+  font-size: 30px;
+  color: var(--colNorm);
+  background: var(--colMed);
+  border-bottom: 3px solid var(--colTheme);
+  padding: 10px;
+  /* padding-left: 20px; */
+  overflow: clip;
+  text-overflow: ellipsis;
+  height: 62.5px;
+  text-align: center;
+}
+
+.sectionTitle {
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+  border-bottom: 2px solid var(--colTheme);
+  padding-bottom: 2px;
+  font-size: 25px;
+  color: var(--colNorm);
+  margin-bottom: 5px;
+  width: 100%;
+}
+
+.sectionSubTitle {
+  font-family: 'Roboto', sans-serif;
+  font-size: 25px;
+  color: var(--colNorm);
+  margin-bottom: 5px;
+  width: auto;
+}
+
+.sectionPara {
+  font-family: 'Roboto', sans-serif;
+  font-size: 25px;
+  color: var(--colDimmed);
+  margin-bottom: 5px;
+  margin-left: 5px;
+  width: auto;
+}
+
+.sectionPill {
+  display: inline-block;
+  width: -webkit-fill-available;
+  height: fit-content;
+  background: var(--colLight);
+
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px;
+  color: var(--colNorm);
+
+  border-radius: 50px;
+  border: 2px solid var(--colTheme);
+
+  padding: 10px;
+  margin: 10px;
+}
+
+.sectionPillButton {
+  display: inline-block;
+  width: -webkit-fill-available;
+  height: fit-content;
+  background: var(--colLight);
+  
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px;
+  color: var(--colNorm);
+  
+  border-radius: 50px;
+  border: 2px solid var(--colTheme);
+  
+  padding: 10px;
+  margin: 10px;
+}
+
+.sectionPillButtonDiv {
+  display: inline-block;
+  float: right;
+}
+
+.sectionButton {
+  width: -webkit-fill-available;
+  height: 50px;
+  background: var(--colSemiDark);
+  border: 3px solid var(--colDark);
+  border-radius: 50px;
+  margin: 5px;
+}
+
+.sectionTextBox {
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+  color: var(--colNorm);
+  background: #555;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 10px;
+  width: calc(100% - 20px);
+  height: 35px;
+  resize: none;
+  overflow: hidden;
+  white-space: pre-line;
+}
+
+.sectionToggle {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 35px;
+  margin: 8px;
+  font-family: 'Roboto', sans-serif;
+  border-radius: 50px;
+}
+
+.sectionToggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.sectionToggle .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--colLight);
+  border-radius: 5px;
+  transition: 0.4s;
+  border: none;
+}
+
+.sectionToggle .slider::before {
+  position: absolute;
+  content: "";
+  height: 27px;
+  width: 27px;
+  left: 4px;
+  bottom: 4px;
+  background-color: var(--colNorm);
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+.sectionToggle input:checked+.slider {
+  background-color: var(--colSuccess);
+}
+
+.sectionToggle input:checked+.slider::before {
+  transform: translateX(25px);
+}
+
+.sectionDateBox {
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+  color: var(--colNorm);
+  background: #555;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 10px;
+  width: calc(100% - 20px);
+  height: 35px;
+  appearance: none;
+  -webkit-appearance: none;
+  text-align: center;
+}
+
+
+/* Mobile override */
+@media only screen and (max-width: 768px) {
+  /* .sectionPillButtonDiv {
+    display: inline-flex;
+    flex-direction: column-reverse;
+    gap: 5px;
+    width: 100%;
+    float: none;
+  } */
+}
+
+.orderTitle {
+  display: inline-block;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bolder;
+  font-size: 20px;
+  color: var(--colTheme);
+  margin: 5px;
+}
+
+.orderText {
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px;
+  color: var(--colNorm);
+  margin: 5px;
+  white-space: pre-line;
+}
+
+.orderSubText {
+  font-family: 'Roboto', sans-serif;
+  font-size: 10px;
+  color: #aaa;
+}
+
+
+
+/* ////////////////////////////////////////////////////////////////////////// */
+/* Notes Page /////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
+
+
+
+.notesSection {
+  width: 100% !important;
+  height: -webkit-fill-available;
+}
+
+.notesSection[columnType="2COL"] {
+  flex: 1 1 49.5%;
+  min-width: 49.5% !important;
+  height: -webkit-fill-available;
+}
+
+.notesSection[columnType="3COL"] {
+  flex: 1 1 32.75%;
+  min-width: 32.75% !important;
+  height: -webkit-fill-available;
+}
+
+/* Mobile override */
+@media only screen and (max-width: 768px) {
+  .notesSection {
+    width: 100% !important;
+    height: -webkit-fill-available;
+  }
+
+  .notesSection[columnType="2COL"] {
+    width: 100% !important;
+    height: -webkit-fill-available;
+  }
+
+  .notesSection[columnType="3COL"] {
+    width: 100% !important;
+    height: -webkit-fill-available;
+  }
+}
+
+/* Tablet override */
+/*@media (min-width: 768px) and (max-width: 1024px) {
+  .notesSection {
+      width: 100% !important;
+      height: -webkit-fill-available;
+    }
+    .notesSection2COL {
+      width: 100% !important;
+      height: -webkit-fill-available;
+    }
+    .notesSection3COL {
+      width: 100% !important;
+      height: -webkit-fill-available;
+    }
+  }
+}*/
+
+.notesTitle {
+  display: inline-block;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bolder;
+  font-size: 20px;
+  color: var(--colNorm);
+  margin: 5px;
+}
+
+.notesPara {
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px;
+  color: var(--colNorm);
+  margin: 10px;
+  white-space: pre-line;
+}
+
+.notesSubInfo {
+  font-family: 'Roboto', sans-serif;
+  font-size: 10px;
+  color: #aaa;
+}
+
+.notesButton {
+  color: var(--colNorm);
+  overflow: clip;
+  float: right;
+  margin-right: 5px;
+  user-select: none;
+}
+
+.notesTextBox {
+  font-size: 20px;
+  color: var(--colNorm);
+  background: #555;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 10px;
+  width: calc(100% - 20px);
+  height: 35px;
+  resize: none;
+  overflow: hidden;
+}
+
+.notesClampedText {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  /* 👈 limits to 5 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#EXCLnotesPagePersonButtons {
+  display: flex;
+  justify-content: space-around;
+}
+
+/* Mobile override */
+@media only screen and (max-width: 768px) {
+  #EXCLnotesPagePersonButtons {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    gap: 5px;
+  }
+}
