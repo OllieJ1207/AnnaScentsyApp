@@ -106,6 +106,10 @@ document.documentElement.requestFullscreen().then(() => {
 
 document.addEventListener("DOMContentLoaded", async function (event) {
 
+  if (!window.location.href.includes("orders")) {
+    window.location.href = "orders"
+  }
+
   if (window.location.href.includes("orders")) {
     //load orders from firebase
     const orders = await getDocs(collection(db, "orders"));
