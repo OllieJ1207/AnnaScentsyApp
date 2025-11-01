@@ -77,6 +77,10 @@
       <textarea class="sectionTextBox" id="orders-newOrder-products" type="text" value=""
         style="height: 10em; overflow-y: auto;"></textarea>
 
+      <p class="sectionSubTitle">Samples Given:</p>
+      <textarea class="sectionTextBox" id="orders-newOrder-samples" type="text" value=""
+        style="height: 10em; overflow-y: auto;"></textarea>
+
       <p class="sectionSubTitle" style="height: 35px; display: inline-block;">Paid?</p>
       <label class="sectionToggle" id="orders-newOrder-paid">
         <input type="checkbox" id="toggleSwitch">
@@ -99,29 +103,38 @@
   <div class="page" id="ordersVIEWORDER" style="display: none; justify-content: center;">
     <p class="title">View Order</p>
     <div class="section">
-      <button class="sectionButton sectionTitle" page="function:UpdateOrder">Update Order</button>
-      <button class="sectionButton sectionTitle" page="function:DeleteOrder">Delete Order</button>
-      <button class="sectionButton sectionTitle" page="function:BackOrder">Back</button>
+      <button class="sectionButton sectionTitle" id="orders-vieOrder-UPDATEBUTTON" page="function:UpdateOrder">Update Order</button>
+      <button class="sectionButton sectionTitle" id="orders-vieOrder-DELETEBUTTON" page="function:DeleteOrder">Delete Order</button>
+      <button class="sectionButton sectionTitle" id="orders-vieOrder-COMPLETEBUTTON" page="function:CompleteOrder">Complete Order</button>
+      <button class="sectionButton sectionTitle" id="orders-vieOrder-BACKBUTTON" page="function:BackOrder">Back</button>
     </div>
     <div class="section">
+
+      <p class="sectionSubTitle" id="orders-viewOrder-dateCompletedTitle">Date Completed:</p>
+      <input type="date" class="sectionDateBox" id="orders-viewOrder-dateCompleted" disabled="true">
+        
       <p class="sectionSubTitle">Order Number:</p>
-      <textarea class="sectionTextBox" id="orders-newOrder-orderNumber" type="text" value=""></textarea>
+      <textarea class="sectionTextBox" id="orders-viewOrder-orderNumber" type="text" value=""></textarea>
 
       <p class="sectionSubTitle">Customer Name:</p>
-      <textarea class="sectionTextBox" id="orders-newOrder-customerName" type="text" value=""></textarea>
+      <textarea class="sectionTextBox" id="orders-viewOrder-customerName" type="text" value=""></textarea>
 
       <p class="sectionSubTitle">Products Ordered:</p>
-      <textarea class="sectionTextBox" id="orders-newOrder-products" type="text" value=""
+      <textarea class="sectionTextBox" id="orders-viewOrder-products" type="text" value=""
+        style="height: 10em; overflow-y: auto;"></textarea>
+
+      <p class="sectionSubTitle">Samples Given:</p>
+      <textarea class="sectionTextBox" id="orders-viewOrder-samples" type="text" value=""
         style="height: 10em; overflow-y: auto;"></textarea>
 
       <p class="sectionSubTitle" style="height: 35px; display: inline-block;">Paid?</p>
-      <label class="sectionToggle" id="orders-newOrder-paid">
+      <label class="sectionToggle" id="orders-viewOrder-paid">
         <input type="checkbox" id="toggleSwitch">
         <span class="slider"></span>
       </label>
 
       <p class="sectionSubTitle">Date Ordered:<p>
-      <input type="date" class="sectionDateBox" id="orders-newOrder-dateOrdered">
+      <input type="date" class="sectionDateBox" id="orders-viewOrder-dateOrdered">
     </div>
   </div>
 
