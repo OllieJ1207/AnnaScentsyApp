@@ -13,9 +13,11 @@ import {
   deleteDoc,
   getDoc,
   getDocs,
+  deleteField,
   Timestamp,
   increment,
-  deleteField,
+  query,
+  orderBy
 } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
 // -- ////////////////////////////////////////////////////////////////////////// -- //
@@ -66,6 +68,7 @@ const months = [
 
 const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 var changingPages = false;
+var pagesLoadingTime = 600;
 
 // -- ////////////////////////////////////////////////////////////////////////// -- //
 // -- FUNCTIONS /////////////////////////////////////////////////////////////// -- //
@@ -79,12 +82,18 @@ function getDeviceByScreen() {
   return "Desktop";
 }
 
-async function playLoadAnim() {
+async function openLoading() {
+  document.querySelector(".V1GLOBAL_LoadingDiv").style.width = "100vw";
+  await wait(600);
+  return;
+}
+
+async function closeLoading() {
   document.querySelector(".V1GLOBAL_LoadingDiv").querySelector("img").classList.add("V1GLOBAL_LoadingDivAnimation")
-  await wait(1000);
-  document.querySelector(".V1GLOBAL_LoadingDiv").style.width = "0vw";
+  await wait(600);
   document.querySelector(".V1GLOBAL_LoadingDiv").querySelector("img").classList.remove("V1GLOBAL_LoadingDivAnimation")
-  await wait(1000);
+  document.querySelector(".V1GLOBAL_LoadingDiv").style.width = "0vw";
+  await wait(600);
   return;
 }
 
@@ -111,13 +120,26 @@ document.addEventListener("DOMContentLoaded", async function (event) {
   }
 
   if (window.location.href.includes("orders")) {
+    
     //load orders from firebase
     const orders = await getDocs(collection(db, "orders"));
+
+    //sort orders by dateOrdered descending
+    const ordersArray = [];
+    orders.forEach(doc => {
+      if (doc.id !== "hidden") {
+        ordersArray.push(doc);
+      }
+    });
+
+    // Sort by dateOrdered descending
+    ordersArray.sort((a, b) => b.data().dateOrdered.toMillis() - a.data().dateOrdered.toMillis());
+    
     //clear orders
     document.querySelector("#ordersDEFAULT").querySelectorAll(".ID_orderSection").forEach(item => item.remove())
 
     //add orders to page
-    orders.forEach((order) => {
+      ordersArray.forEach((order) => {
       if (order.id === "hidden") { return; }
       const orderData = order.data()
       //add order to page
@@ -126,21 +148,23 @@ document.addEventListener("DOMContentLoaded", async function (event) {
       orderDiv.classList.add("section");
       orderDiv.classList.add("ID_orderSection");
       orderDiv.setAttribute("orderID", order.id)
+
+      var orderNumberText = "";
+      if (orderData.orderNumber !== "") {
+        orderNumberText = `\n<p class="orderText">Order Number: ${orderData.orderNumber}</p>`;
+      }
+      var completedText = "";
+      if (orderData.dateCompleted) {
+        completedText = `\n<p class="orderText">Completed: <span style="color: var(--colSuccess);">${orderData.dateCompleted.toDate().toLocaleDateString("en-US", options)}</span></p>`;
+      }
+        
       orderDiv.innerHTML = `
-        <p class="orderTitle">Order for ${orderData.customerName}</p>
+        <p class="orderTitle">Order for ${orderData.customerName}</p> ${completedText} ${orderNumberText}
         <p class="orderText">Paid: ${paid}</p>
         <p class="orderText">Date: ${orderData.dateOrdered.toDate().toLocaleDateString("en-US", options)}</p>
-        <button class="sectionPillButton sectionTitle" page="function:ViewOrder">Enter New Order</button>
+        <button class="sectionPillButton sectionTitle" page="function:ViewOrder">View Order</button>
       `
-      if (orderData.orderNumber !== "") {
-        orderDiv.innerHTML = `
-          <p class="orderTitle">Order for ${orderData.customerName}</p>
-          <p class="orderText">Order Number: ${orderData.orderNumber}</p>
-          <p class="orderText">Paid: ${paid}</p>
-          <p class="orderText">Date: ${orderData.dateOrdered.toDate().toLocaleDateString("en-US", options)}</p>
-        <button class="sectionPillButton sectionTitle" page="function:ViewOrder">Enter New Order</button>
-        `
-      }
+        
       orderDiv.querySelector("button").addEventListener("click", async function () {
         await ViewOrder(order.id);
       })
@@ -148,8 +172,11 @@ document.addEventListener("DOMContentLoaded", async function (event) {
     })
   }
   
-  await wait(1000);
-  await playLoadAnim();
+  await wait(pagesLoadingTime);
+
+  // Close loading screen
+  await closeLoading();
+  
 })
 
 // -- ////////////////////////////////////////////////////////////////////////// -- //
@@ -169,12 +196,16 @@ document.querySelectorAll(".sectionButton").forEach((button) => {
         await UpdateOrder(document.getElementById("ordersVIEWORDER").getAttribute("orderID"));
       } else if (button.getAttribute("page") === "function:DeleteOrder") {
         await DeleteOrder(document.getElementById("ordersVIEWORDER").getAttribute("orderID"));
+      } else if (button.getAttribute("page") === "function:CompleteOrder") {
+        await CompleteOrder(document.getElementById("ordersVIEWORDER").getAttribute("orderID"));
       }
     } else {
       if (changingPages) return;
       changingPages = true;
-      document.querySelector(".V1GLOBAL_LoadingDiv").style.width = "100vw";
-      await wait(1100);
+
+      // Open loading screen
+      await openLoading();
+      
       window.location.href = button.getAttribute("page");
     }
   });
@@ -183,8 +214,10 @@ document.querySelectorAll(".sectionButton").forEach((button) => {
 async function NewOrder() {
   if (changingPages) return;
   changingPages = true;
-  document.querySelector(".V1GLOBAL_LoadingDiv").style.width = "100vw";
-  await wait(1500);
+
+  // Open loading screen
+  await openLoading();
+
   document.querySelector("#ordersDEFAULT").style.display = "none";
   document.querySelector("#ordersNEWORDER").style.display = "flex";
   document.querySelector("#ordersNEWORDER").querySelector("#orders-newOrder-orderNumber").value = "";
@@ -193,27 +226,37 @@ async function NewOrder() {
   document.querySelector("#ordersNEWORDER").querySelector("#orders-newOrder-paid").querySelector("input").checked = false;
   const today = new Date().toISOString().split('T')[0];
   document.querySelector("#ordersNEWORDER").querySelector("#orders-newOrder-dateOrdered").value = today;
-  await playLoadAnim();
+
+  // Close loading screen
+  await closeLoading();
+
   changingPages = false;
 }
 
 async function BackOrder() {
   if (changingPages) return;
   changingPages = true;
-  document.querySelector(".V1GLOBAL_LoadingDiv").style.width = "100vw";
-  await wait(1500);
+
+  // Open loading screen
+  await openLoading();
+
   document.querySelector("#ordersDEFAULT").style.display = "flex";
   document.querySelector("#ordersNEWORDER").style.display = "none";
   document.querySelector("#ordersVIEWORDER").style.display = "none";
-  await playLoadAnim();
+
+  // Close loading screen
+  await closeLoading();
+
   changingPages = false;
 }
 
 async function SubmitNewOrder() {
   if (changingPages) return;
   changingPages = true;
-  document.querySelector(".V1GLOBAL_LoadingDiv").style.width = "100vw";
-  await wait(1500);
+
+  // Open loading screen
+  await openLoading();
+
   document.querySelector("#ordersDEFAULT").style.display = "flex";
   document.querySelector("#ordersNEWORDER").style.display = "none";
   
@@ -221,25 +264,29 @@ async function SubmitNewOrder() {
   const orderNumber = document.querySelector("#ordersNEWORDER").querySelector("#orders-newOrder-orderNumber").value;
   const customerName = document.querySelector("#ordersNEWORDER").querySelector("#orders-newOrder-customerName").value;
   const products = document.querySelector("#ordersNEWORDER").querySelector("#orders-newOrder-products").value;
+  const samples = document.querySelector("#ordersNEWORDER").querySelector("#orders-newOrder-samples").value;
   const paid = document.querySelector("#ordersNEWORDER").querySelector("#orders-newOrder-paid").querySelector("input").checked;
   const dateOrdered = document.querySelector("#ordersNEWORDER").querySelector("#orders-newOrder-dateOrdered").value;
   await addDoc(collection(db, "orders") , {
     orderNumber: orderNumber,
     customerName: customerName,
     products: products,
+    samples: samples,
     paid: paid,
     dateOrdered: Timestamp.fromDate(new Date(dateOrdered)),
   })
 
-  await wait(500);
+  await wait(pagesLoadingTime);
   window.location.reload();
 }
 
 async function ViewOrder(orderID) {
   if (changingPages) return;
   changingPages = true;
-  document.querySelector(".V1GLOBAL_LoadingDiv").style.width = "100vw";
-  await wait(1500);
+
+  // Open loading screen
+  await openLoading();
+
   document.querySelector("#ordersDEFAULT").style.display = "none";
   document.querySelector("#ordersVIEWORDER").style.display = "flex";
 
@@ -248,51 +295,109 @@ async function ViewOrder(orderID) {
   const orderData = order.data();
   
   //set order data
-  document.querySelector("#ordersVIEWORDER").querySelector("#orders-newOrder-orderNumber").value = orderData.orderNumber;
-  document.querySelector("#ordersVIEWORDER").querySelector("#orders-newOrder-customerName").value = orderData.customerName;
-  document.querySelector("#ordersVIEWORDER").querySelector("#orders-newOrder-products").value = orderData.products;
-  document.querySelector("#ordersVIEWORDER").querySelector("#orders-newOrder-paid").querySelector("input").checked = orderData.paid;
-  document.querySelector("#ordersVIEWORDER").querySelector("#orders-newOrder-dateOrdered").value = orderData.dateOrdered.toDate().toISOString().split('T')[0];
+  document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-orderNumber").value = orderData.orderNumber;
+  document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-customerName").value = orderData.customerName;
+  document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-products").value = orderData.products;
+  document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-samples").value = orderData.samples;
+  document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-paid").querySelector("input").checked = orderData.paid;
+  document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateOrdered").value = orderData.dateOrdered.toDate().toISOString().split('T')[0];
 
   document.querySelector("#ordersVIEWORDER").setAttribute("orderID", orderID);
-  await wait(500)
-  await playLoadAnim();
+
+  if (orderData.dateCompleted) {
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateCompleted").value = orderData.dateCompleted.toDate().toISOString().split('T')[0];
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateCompleted").style.display = "block";
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateCompletedTitle").style.display = "block";
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-vieOrder-UPDATEBUTTON").style.display = "none";
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-vieOrder-DELETEBUTTON").style.display = "none";
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-vieOrder-COMPLETEBUTTON").style.display = "none";
+
+    document.getElementById("orders-viewOrder-orderNumber").disabled = true;
+    document.getElementById("orders-viewOrder-customerName").disabled = true;
+    document.getElementById("orders-viewOrder-products").disabled = true;
+    document.getElementById("orders-viewOrder-samples").disabled = true;
+    document.getElementById("orders-viewOrder-paid").querySelector("input").disabled = true;
+    document.getElementById("orders-viewOrder-dateOrdered").disabled = true;
+  } else {
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateCompleted").value = "";
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateCompleted").style.display = "none";
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateCompletedTitle").style.display = "none";
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-vieOrder-UPDATEBUTTON").style.display = "block";
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-vieOrder-DELETEBUTTON").style.display = "block";
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-vieOrder-COMPLETEBUTTON").style.display = "block";
+
+    document.getElementById("orders-viewOrder-orderNumber").disabled = false;
+    document.getElementById("orders-viewOrder-customerName").disabled = false;
+    document.getElementById("orders-viewOrder-products").disabled = false;
+    document.getElementById("orders-viewOrder-samples").disabled = false;
+    document.getElementById("orders-viewOrder-paid").querySelector("input").disabled = false;
+    document.getElementById("orders-viewOrder-dateOrdered").disabled = false;
+  }
+
+  // Close loading screen
+  await closeLoading();
+
   changingPages = false;
 }
 
 async function UpdateOrder(orderID) {
   if (changingPages) return;
   changingPages = true;
-  document.querySelector(".V1GLOBAL_LoadingDiv").style.width = "100vw";
-  await wait(1500);
+
+  // Open loading screen
+  await openLoading();
+
   document.querySelector("#ordersDEFAULT").style.display = "flex";
   document.querySelector("#ordersVIEWORDER").style.display = "none";
 
   //upload to firebase
-  const orderNumber = document.querySelector("#ordersVIEWORDER").querySelector("#orders-newOrder-orderNumber").value;
-  const customerName = document.querySelector("#ordersVIEWORDER").querySelector("#orders-newOrder-customerName").value;
-  const products = document.querySelector("#ordersVIEWORDER").querySelector("#orders-newOrder-products").value;  
-  const paid = document.querySelector("#ordersVIEWORDER").querySelector("#orders-newOrder-paid").querySelector("input").checked;
-  const dateOrdered = document.querySelector("#ordersVIEWORDER").querySelector("#orders-newOrder-dateOrdered").value;
+  const orderNumber = document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-orderNumber").value;
+  const customerName = document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-customerName").value;
+  const products = document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-products").value;
+  const samples = document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-samples").value;
+  const paid = document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-paid").querySelector("input").checked;
+  const dateOrdered = document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateOrdered").value;
   await updateDoc(doc(db, "orders", orderID) , {
     orderNumber: orderNumber,
     customerName: customerName,
     products: products,
+    samples: samples,
     paid: paid,
     dateOrdered: Timestamp.fromDate(new Date(dateOrdered)),
   })
-  await wait(500);
+  
+  await wait(pagesLoadingTime);
   window.location.reload();
 }
 
 async function DeleteOrder(orderID) {
   if (changingPages) return;
   changingPages = true;
-  document.querySelector(".V1GLOBAL_LoadingDiv").style.width = "100vw";
-  await wait(1500);
+
+  // Open loading screen
+  await openLoading();
+
   document.querySelector("#ordersDEFAULT").style.display = "flex";
   document.querySelector("#ordersVIEWORDER").style.display = "none";
   await deleteDoc(doc(db, "orders", orderID));
-  await wait(500);
+  
+  await wait(pagesLoadingTime);
+  window.location.reload();
+}
+
+async function CompleteOrder(orderID) {
+  if (changingPages) return;
+  changingPages = true;
+
+  // Open loading screen
+  await openLoading();
+
+
+  //upload to firebase
+  await updateDoc(doc(db, "orders", orderID) , {
+    dateCompleted: Timestamp.fromDate(new Date())
+  })
+  
+  await wait(pagesLoadingTime);
   window.location.reload();
 }
