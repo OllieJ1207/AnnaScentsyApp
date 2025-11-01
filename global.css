@@ -59,7 +59,7 @@ body {
   height: 100vh;
   width: 100vw;
   background-color: var(--colTheme);
-  transition: width 1s cubic-bezier(0.74, 0.1, 0.27, 0.83);
+  transition: width 0.5s cubic-bezier(0.74, 0.1, 0.27, 0.83);
   overflow: hidden;
   z-index: 999;
   justify-content: center;
@@ -75,7 +75,7 @@ body {
 }
 
 .V1GLOBAL_LoadingDivAnimation {
-  animation: V1GLOBAL_LoadingDivAnimation 1s ease 0s 1 normal none;
+  animation: V1GLOBAL_LoadingDivAnimation 0.5s ease 0s 1 normal none;
 }
 
 @keyframes V1GLOBAL_LoadingDivAnimation {
@@ -106,7 +106,7 @@ body {
 
   min-height: 500px;
   height: fit-content;
-  width: 100vw !important;
+  width: 100% !important;
 
   /* left: 86px; */
   padding: 15px;
@@ -208,7 +208,7 @@ body {
   border-radius: 50px;
   border: 2px solid var(--colTheme);
   
-  padding: 10px;
+  padding: 5px;
   margin: 10px;
 }
 
@@ -218,8 +218,9 @@ body {
 }
 
 .sectionButton {
+  display: block;
   width: -webkit-fill-available;
-  height: 50px;
+  height: 45px;
   background: var(--colSemiDark);
   border: 3px solid var(--colDark);
   border-radius: 50px;
