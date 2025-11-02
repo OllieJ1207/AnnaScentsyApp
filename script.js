@@ -120,15 +120,35 @@ document.addEventListener("DOMContentLoaded", async function (event) {
   }
 
   if (window.location.href.includes("orders")) {
+
+    if (window.location.href.includes("viewAllOrders=true")) {
+     document.getElementById("orders-defaultOrder-VIEWALLORDERSBUTTON").innerHTML = "View Recent Orders"
+    } else {
+      document.getElementById("orders-defaultOrder-VIEWALLORDERSBUTTON").innerHTML = "View All Orders"
+    }
     
     //load orders from firebase
     const orders = await getDocs(collection(db, "orders"));
 
+    const LoadAll = new URLSearchParams(window.location.search).get("viewAllOrders") === "true"
+
     //sort orders by dateOrdered descending
     const ordersArray = [];
-    orders.forEach(doc => {
+    await orders.forEach(doc => {
       if (doc.id !== "hidden") {
-        ordersArray.push(doc);
+        
+        //add order to array if it was ordered in the last 30 days
+        if (doc.data().dateOrdered.toDate() > new Date(new Date().setDate(new Date().getDate() - 30))) {
+          ordersArray.push(doc);
+          
+        } else if (LoadAll == true) {
+
+          //add order to array if it was ordered in the last 6 months
+          if (doc.data().dateOrdered.toDate() > new Date(new Date().setMonth(new Date().getMonth() - 6))) {
+            ordersArray.push(doc);
+          }
+          
+        }
       }
     });
 
@@ -139,7 +159,7 @@ document.addEventListener("DOMContentLoaded", async function (event) {
     document.querySelector("#ordersDEFAULT").querySelectorAll(".ID_orderSection").forEach(item => item.remove())
 
     //add orders to page
-      ordersArray.forEach((order) => {
+    ordersArray.forEach((order) => {
       if (order.id === "hidden") { return; }
       const orderData = order.data()
       //add order to page
@@ -186,19 +206,19 @@ document.addEventListener("DOMContentLoaded", async function (event) {
 document.querySelectorAll(".sectionButton").forEach((button) => {
   button.addEventListener("click", async function () {
     if (button.getAttribute("page").startsWith("function:")) {
-      if (button.getAttribute("page") === "function:NewOrder") {
-        await NewOrder();
-      } else if (button.getAttribute("page") === "function:BackOrder") {
-        await BackOrder();
-      } else if (button.getAttribute("page") === "function:SubmitNewOrder") {
-        await SubmitNewOrder();
-      } else if (button.getAttribute("page") === "function:UpdateOrder") {
-        await UpdateOrder(document.getElementById("ordersVIEWORDER").getAttribute("orderID"));
-      } else if (button.getAttribute("page") === "function:DeleteOrder") {
-        await DeleteOrder(document.getElementById("ordersVIEWORDER").getAttribute("orderID"));
-      } else if (button.getAttribute("page") === "function:CompleteOrder") {
-        await CompleteOrder(document.getElementById("ordersVIEWORDER").getAttribute("orderID"));
+
+      if (AllFunctions[button.getAttribute("page").replace("function:", "")]) {
+
+        if ([ "UpdateOrder", "DeleteOrder", "CompleteOrder" ].includes(button.getAttribute("page").replace("function:", ""))) {
+          await AllFunctions[button.getAttribute("page").replace("function:", "")](button.parentElement.parentElement.getAttribute("orderID"));
+        } else {
+          await AllFunctions[button.getAttribute("page").replace("function:", "")]();
+        }
+        
+      } else {
+        console.error("Function not found: " + button.getAttribute("page").replace("function:", ""));
       }
+      
     } else {
       if (changingPages) return;
       changingPages = true;
@@ -243,6 +263,8 @@ async function BackOrder() {
   document.querySelector("#ordersDEFAULT").style.display = "flex";
   document.querySelector("#ordersNEWORDER").style.display = "none";
   document.querySelector("#ordersVIEWORDER").style.display = "none";
+  document.getElementById("orders-viewOrder-DELETEBUTTON").innerHTML = "Delete Order"
+  document.getElementById("orders-viewOrder-DELETEBUTTON").style.borderColor = "var(--colDark)"
 
   // Close loading screen
   await closeLoading();
@@ -308,9 +330,9 @@ async function ViewOrder(orderID) {
     document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateCompleted").value = orderData.dateCompleted.toDate().toISOString().split('T')[0];
     document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateCompleted").style.display = "block";
     document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateCompletedTitle").style.display = "block";
-    document.querySelector("#ordersVIEWORDER").querySelector("#orders-vieOrder-UPDATEBUTTON").style.display = "none";
-    document.querySelector("#ordersVIEWORDER").querySelector("#orders-vieOrder-DELETEBUTTON").style.display = "none";
-    document.querySelector("#ordersVIEWORDER").querySelector("#orders-vieOrder-COMPLETEBUTTON").style.display = "none";
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-UPDATEBUTTON").style.display = "none";
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-DELETEBUTTON").style.display = "none";
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-COMPLETEBUTTON").style.display = "none";
 
     document.getElementById("orders-viewOrder-orderNumber").disabled = true;
     document.getElementById("orders-viewOrder-customerName").disabled = true;
@@ -322,9 +344,9 @@ async function ViewOrder(orderID) {
     document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateCompleted").value = "";
     document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateCompleted").style.display = "none";
     document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateCompletedTitle").style.display = "none";
-    document.querySelector("#ordersVIEWORDER").querySelector("#orders-vieOrder-UPDATEBUTTON").style.display = "block";
-    document.querySelector("#ordersVIEWORDER").querySelector("#orders-vieOrder-DELETEBUTTON").style.display = "block";
-    document.querySelector("#ordersVIEWORDER").querySelector("#orders-vieOrder-COMPLETEBUTTON").style.display = "block";
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-UPDATEBUTTON").style.display = "block";
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-DELETEBUTTON").style.display = "block";
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-COMPLETEBUTTON").style.display = "block";
 
     document.getElementById("orders-viewOrder-orderNumber").disabled = false;
     document.getElementById("orders-viewOrder-customerName").disabled = false;
@@ -371,18 +393,25 @@ async function UpdateOrder(orderID) {
 }
 
 async function DeleteOrder(orderID) {
-  if (changingPages) return;
-  changingPages = true;
-
-  // Open loading screen
-  await openLoading();
-
-  document.querySelector("#ordersDEFAULT").style.display = "flex";
-  document.querySelector("#ordersVIEWORDER").style.display = "none";
-  await deleteDoc(doc(db, "orders", orderID));
+  if (document.getElementById("orders-viewOrder-DELETEBUTTON").innerHTML == "Delete Order") {
+    document.getElementById("orders-viewOrder-DELETEBUTTON").innerHTML = "Confirm Delete";
+    document.getElementById("orders-viewOrder-DELETEBUTTON").style.borderColor = "var(--colError)"
+  } else {
+    
+    if (changingPages) return;
+    changingPages = true;
   
-  await wait(pagesLoadingTime);
-  window.location.reload();
+    // Open loading screen
+    await openLoading();
+  
+    document.querySelector("#ordersDEFAULT").style.display = "flex";
+    document.querySelector("#ordersVIEWORDER").style.display = "none";
+    await deleteDoc(doc(db, "orders", orderID));
+    
+    await wait(pagesLoadingTime);
+    window.location.reload();
+  
+  }
 }
 
 async function CompleteOrder(orderID) {
@@ -401,3 +430,19 @@ async function CompleteOrder(orderID) {
   await wait(pagesLoadingTime);
   window.location.reload();
 }
+
+async function ViewAllOrders() {
+  if (changingPages) return;
+  changingPages = true;
+
+  // Open loading screen
+  await openLoading();
+
+  if (window.location.href.includes("viewAllOrders=true")) {
+    window.location.href = "orders";
+  } else {
+    window.location.href = "orders?viewAllOrders=true";
+  }
+}
+
+const AllFunctions = { NewOrder, BackOrder, SubmitNewOrder, ViewOrder, UpdateOrder, DeleteOrder, CompleteOrder, ViewAllOrders }
