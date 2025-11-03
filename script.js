@@ -296,6 +296,7 @@ async function SubmitNewOrder() {
     samples: samples,
     paid: paid,
     dateOrdered: Timestamp.fromDate(new Date(dateOrdered)),
+    DEV_dateCreated: Timestamp.fromDate(new Date())
   })
 
   await wait(pagesLoadingTime);
