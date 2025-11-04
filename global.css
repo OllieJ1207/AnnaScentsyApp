@@ -131,7 +131,17 @@ body {
 
 .sectionGroup {
   display: flex;
-  gap: 9px
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.sectionGroup .sectionSubTitle {
+  margin-bottom: 0px;
+  width: calc(100% - 80px);
+}
+
+.sectionGroup .sectionTextBox {
+  width: auto;
 }
 
 .title {
