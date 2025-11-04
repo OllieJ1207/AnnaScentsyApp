@@ -169,6 +169,10 @@ document.addEventListener("DOMContentLoaded", async function (event) {
       orderDiv.classList.add("ID_orderSection");
       orderDiv.setAttribute("orderID", order.id)
 
+      var deliveryText = "";
+      if (orderData.delivery == true) {
+          deliveryText = `\n<p class="orderText" style="color: var(--colSuccess);">Ready for Delivery!</p>`;
+      }
       var orderNumberText = "";
       if (orderData.orderNumber !== "") {
         orderNumberText = `\n<p class="orderText">Order Number: ${orderData.orderNumber}</p>`;
@@ -179,7 +183,7 @@ document.addEventListener("DOMContentLoaded", async function (event) {
       }
         
       orderDiv.innerHTML = `
-        <p class="orderTitle">Order for ${orderData.customerName}</p> ${completedText} ${orderNumberText}
+        <p class="orderTitle">Order for ${orderData.customerName}</p> ${deliveryText} ${completedText} ${orderNumberText}
         <p class="orderText">Paid: ${paid}</p>
         <p class="orderText">Date: ${orderData.dateOrdered.toDate().toLocaleDateString("en-US", options)}</p>
         <button class="sectionPillButton sectionTitle" page="function:ViewOrder">View Order</button>
@@ -287,14 +291,18 @@ async function SubmitNewOrder() {
   const customerName = document.querySelector("#ordersNEWORDER").querySelector("#orders-newOrder-customerName").value;
   const products = document.querySelector("#ordersNEWORDER").querySelector("#orders-newOrder-products").value;
   const samples = document.querySelector("#ordersNEWORDER").querySelector("#orders-newOrder-samples").value;
+  const total = document.querySelector("#ordersNEWORDER").querySelector("#orders-newOrder-total").value;
   const paid = document.querySelector("#ordersNEWORDER").querySelector("#orders-newOrder-paid").querySelector("input").checked;
+  const delivery = document.querySelector("#ordersNEWORDER").querySelector("#orders-newOrder-deliveryReady").querySelector("input").checked;
   const dateOrdered = document.querySelector("#ordersNEWORDER").querySelector("#orders-newOrder-dateOrdered").value;
   await addDoc(collection(db, "orders") , {
     orderNumber: orderNumber,
     customerName: customerName,
     products: products,
     samples: samples,
+    total: total,
     paid: paid,
+    delivery: delivery,
     dateOrdered: Timestamp.fromDate(new Date(dateOrdered)),
     DEV_dateCreated: Timestamp.fromDate(new Date())
   })
@@ -322,7 +330,9 @@ async function ViewOrder(orderID) {
   document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-customerName").value = orderData.customerName;
   document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-products").value = orderData.products;
   document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-samples").value = orderData.samples;
+  document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-total").value = orderData.total;
   document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-paid").querySelector("input").checked = orderData.paid;
+  document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-deliveryReady").querySelector("input").checked = orderData.delivery;
   document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateOrdered").value = orderData.dateOrdered.toDate().toISOString().split('T')[0];
 
   document.querySelector("#ordersVIEWORDER").setAttribute("orderID", orderID);
@@ -339,7 +349,9 @@ async function ViewOrder(orderID) {
     document.getElementById("orders-viewOrder-customerName").disabled = true;
     document.getElementById("orders-viewOrder-products").disabled = true;
     document.getElementById("orders-viewOrder-samples").disabled = true;
+    document.getElementById("orders-viewOrder-total").disabled = true;
     document.getElementById("orders-viewOrder-paid").querySelector("input").disabled = true;
+    document.getElementById("orders-viewOrder-deliveryReady").querySelector("input").disabled = true;
     document.getElementById("orders-viewOrder-dateOrdered").disabled = true;
   } else {
     document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateCompleted").value = "";
@@ -353,7 +365,9 @@ async function ViewOrder(orderID) {
     document.getElementById("orders-viewOrder-customerName").disabled = false;
     document.getElementById("orders-viewOrder-products").disabled = false;
     document.getElementById("orders-viewOrder-samples").disabled = false;
+    document.getElementById("orders-viewOrder-total").disabled = false;
     document.getElementById("orders-viewOrder-paid").querySelector("input").disabled = false;
+    document.getElementById("orders-viewOrder-deliveryReady").querySelector("input").disabled = false;
     document.getElementById("orders-viewOrder-dateOrdered").disabled = false;
   }
 
@@ -378,14 +392,18 @@ async function UpdateOrder(orderID) {
   const customerName = document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-customerName").value;
   const products = document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-products").value;
   const samples = document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-samples").value;
+  const total = document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-total").value;
   const paid = document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-paid").querySelector("input").checked;
+  const delivery = document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-deliveryReady").querySelector("input").checked;
   const dateOrdered = document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateOrdered").value;
   await updateDoc(doc(db, "orders", orderID) , {
     orderNumber: orderNumber,
     customerName: customerName,
     products: products,
     samples: samples,
+    total: total,
     paid: paid,
+    delivery: delivery,
     dateOrdered: Timestamp.fromDate(new Date(dateOrdered)),
   })
   
