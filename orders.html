@@ -82,11 +82,26 @@
       <textarea class="sectionTextBox" id="orders-newOrder-samples" type="text" value=""
         style="height: 10em; overflow-y: auto;"></textarea>
 
-      <p class="sectionSubTitle" style="height: 35px; display: inline-block;">Paid?</p>
-      <label class="sectionToggle" id="orders-newOrder-paid">
-        <input type="checkbox" id="toggleSwitch">
-        <span class="slider"></span>
-      </label>
+      <div class="sectionGroup">
+        <p class="sectionSubTitle" style="width: 225px;">Order Total:</p>
+        <textarea class="sectionTextBox" id="orders-newOrder-total" type="text" value="">£</textarea>
+      </div>
+
+      <div class="sectionGroup">
+        <p class="sectionSubTitle">Paid?</p>
+        <label class="sectionToggle" id="orders-newOrder-paid">
+          <input type="checkbox" id="toggleSwitch">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="sectionGroup">
+        <p class="sectionSubTitle">Ready to Deliver?</p>
+        <label class="sectionToggle" id="orders-newOrder-deliveryReady">
+          <input type="checkbox" id="toggleSwitch">
+          <span class="slider"></span>
+        </label>
+      </div>
 
       <p class="sectionSubTitle">Date Ordered:<p>
       <input type="date" class="sectionDateBox" id="orders-newOrder-dateOrdered">
@@ -128,11 +143,26 @@
       <textarea class="sectionTextBox" id="orders-viewOrder-samples" type="text" value=""
         style="height: 10em; overflow-y: auto;"></textarea>
 
-      <p class="sectionSubTitle" style="height: 35px; display: inline-block;">Paid?</p>
-      <label class="sectionToggle" id="orders-viewOrder-paid">
-        <input type="checkbox" id="toggleSwitch">
-        <span class="slider"></span>
-      </label>
+      <div class="sectionGroup">
+        <p class="sectionSubTitle" style="width: 225px;">Order Total:</p>
+        <textarea class="sectionTextBox" id="orders-viewOrder-total" type="text" value="" style="padding-left: 15px;"> <span>£</span> </textarea>
+      </div>
+
+      <div class="sectionGroup">
+        <p class="sectionSubTitle">Paid?</p>
+        <label class="sectionToggle" id="orders-viewOrder-paid">
+          <input type="checkbox" id="toggleSwitch">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="sectionGroup">
+        <p class="sectionSubTitle">Ready to Deliver?</p>
+        <label class="sectionToggle" id="orders-viewOrder-deliveryReady">
+          <input type="checkbox" id="toggleSwitch">
+          <span class="slider"></span>
+        </label>
+      </div>
 
       <p class="sectionSubTitle">Date Ordered:<p>
       <input type="date" class="sectionDateBox" id="orders-viewOrder-dateOrdered">
