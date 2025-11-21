@@ -69,6 +69,7 @@ const months = [
 const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 var changingPages = false;
 var pagesLoadingTime = 600;
+var isSearchingOrders = false;
 
 // -- ////////////////////////////////////////////////////////////////////////// -- //
 // -- FUNCTIONS /////////////////////////////////////////////////////////////// -- //
@@ -465,3 +466,30 @@ async function ViewAllOrders() {
 }
 
 const AllFunctions = { NewOrder, BackOrder, SubmitNewOrder, ViewOrder, UpdateOrder, DeleteOrder, CompleteOrder, ViewAllOrders }
+
+document.getElementById("orders-defaultOrder-searchBox").addEventListener("input", async function() {
+
+  if (isSearchingOrders) return;
+  isSearchingOrders = true;
+  await SearchOrders();
+  await wait(100);
+  isSearchingOrders = false;
+  
+})
+
+async function SearchOrders() {
+  let input = document.getElementById('orders-defaultOrder-searchBox').value
+  input = input.toLowerCase();
+  let x = document.getElementsByClassName('section ID_orderSection');
+  
+  for (var i = 0; i < x.length; i++) {
+    if (!x[i].querySelectorAll(".orderTitle")[0].innerHTML.toLowerCase().includes(input) && !x[i].querySelectorAll(".orderText")[1].innerHTML.toLowerCase().includes(input)) {
+      x[i].style.display = "none";
+    }
+    else {
+      if (x[i].style.display == "none") {
+        x[i].style.removeProperty("display");
+      }
+    }
+  }
+}
