@@ -36,6 +36,15 @@
     <img src="./sfts_logo.png"></img>
   </div>
 
+  <div class="section" id="orders-savePopup" style="display: none;">
+    <div class="section" style="justify-self: center; margin-top: 80%; border-color: var(--colError);">
+      <p class="sectionTitle">Are you sure?</p>
+      <p class="sectionPara">If you continue, any details on this page won't be saved.</p>
+      <button class="sectionButton sectionTitle" page="function:ExitCancel">Stay on this page</button>
+      <button class="sectionButton sectionTitle" page="function:BackOrderSave">Exit without Saving</button>
+    </div>
+  </div>
+
 
 
   <!-- ////////////////////////////////////////////////////////////////////////// -->
@@ -98,7 +107,7 @@
       </div>
 
       <div class="sectionGroup">
-        <p class="sectionSubTitle">Ready to Deliver?</p>
+        <p class="sectionSubTitle">Delivered?</p>
         <label class="sectionToggle" id="orders-newOrder-deliveryReady">
           <input type="checkbox" id="toggleSwitch">
           <span class="slider"></span>
@@ -159,7 +168,7 @@
       </div>
 
       <div class="sectionGroup">
-        <p class="sectionSubTitle">Ready to Deliver?</p>
+        <p class="sectionSubTitle">Delivered?</p>
         <label class="sectionToggle" id="orders-viewOrder-deliveryReady">
           <input type="checkbox" id="toggleSwitch">
           <span class="slider"></span>
