@@ -70,6 +70,7 @@ const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 var changingPages = false;
 var pagesLoadingTime = 600;
 var isSearchingOrders = false;
+var hasHadEdits = false;
 
 // -- ////////////////////////////////////////////////////////////////////////// -- //
 // -- FUNCTIONS /////////////////////////////////////////////////////////////// -- //
@@ -113,6 +114,35 @@ document.documentElement.requestFullscreen().then(() => {
 // -- ////////////////////////////////////////////////////////////////////////// -- //
 // -- ON PAGE LOAD //////////////////////////////////////////////////////////// -- //
 // -- //////////////////////////////////////////////////////////////////////// -- //
+
+if (window.location.href.includes("orders")) {
+
+  document.getElementById("orders-viewOrder-orderNumber").onchange = function () {
+    hasHadEdits = true;
+  }
+  document.getElementById("orders-viewOrder-customerName").onchange = function () {
+    hasHadEdits = true;
+  }
+  document.getElementById("orders-viewOrder-products").onchange = function () {
+    hasHadEdits = true;
+  }
+  document.getElementById("orders-viewOrder-samples").onchange = function () {
+    hasHadEdits = true;
+  }
+  document.getElementById("orders-viewOrder-total").onchange = function () {
+    hasHadEdits = true;
+  }
+  document.getElementById("orders-viewOrder-paid").onchange = function () {
+    hasHadEdits = true;
+  }
+  document.getElementById("orders-viewOrder-deliveryReady").onchange = function () {
+    hasHadEdits = true;
+  }
+  document.getElementById("orders-viewOrder-dateOrdered").onchange = function () {
+    hasHadEdits = true;
+  }
+
+}
 
 document.addEventListener("DOMContentLoaded", async function (event) {
 
@@ -171,9 +201,9 @@ document.addEventListener("DOMContentLoaded", async function (event) {
       orderDiv.setAttribute("orderID", order.id)
 
       var deliveryText = "";
-      if (orderData.delivery == true) {
-          deliveryText = `\n<p class="orderText" style="color: var(--colSuccess);">Ready for Delivery!</p>`;
-      }
+      // if (orderData.delivery == true) {
+      //     deliveryText = `\n<p class="orderText" style="color: var(--colSuccess);">Order Delivered!</p>`;
+      // }
       var orderNumberText = "";
       if (orderData.orderNumber !== "") {
         orderNumberText = `\n<p class="orderText">Order Number: ${orderData.orderNumber}</p>`;
@@ -202,7 +232,7 @@ document.addEventListener("DOMContentLoaded", async function (event) {
   // Close loading screen
   await closeLoading();
   
-})
+});
 
 // -- ////////////////////////////////////////////////////////////////////////// -- //
 // -- SELECT PAGE BUTTONS ///////////////////////////////////////////////////// -- //
@@ -259,22 +289,47 @@ async function NewOrder() {
 }
 
 async function BackOrder() {
-  if (changingPages) return;
-  changingPages = true;
+  if (hasHadEdits == true) {
+    document.getElementById("orders-savePopup").style.display = "block";
+    document.getElementById("ordersDEFAULT").style.position = "relative";
+    document.getElementById("ordersNEWORDER").style.position = "relative";
+    document.getElementById("ordersVIEWORDER").style.position = "relative";
+  } else {
+  
+    if (changingPages) return;
+    changingPages = true;
+  
+    // Open loading screen
+    await openLoading();
+  
+    document.querySelector("#ordersDEFAULT").style.display = "flex";
+    document.querySelector("#ordersNEWORDER").style.display = "none";
+    document.querySelector("#ordersVIEWORDER").style.display = "none";
+    document.getElementById("orders-viewOrder-DELETEBUTTON").innerHTML = "Delete Order"
+    document.getElementById("orders-viewOrder-DELETEBUTTON").style.borderColor = "var(--colDark)"
+    document.getElementById("orders-savePopup").style.display = "none";
+    document.getElementById("ordersDEFAULT").style.removeProperty("position");
+    document.getElementById("ordersNEWORDER").style.removeProperty("position");
+    document.getElementById("ordersVIEWORDER").style.removeProperty("position");
+  
+    // Close loading screen
+    await closeLoading();
+  
+    changingPages = false;
 
-  // Open loading screen
-  await openLoading();
+  }
+}
 
-  document.querySelector("#ordersDEFAULT").style.display = "flex";
-  document.querySelector("#ordersNEWORDER").style.display = "none";
-  document.querySelector("#ordersVIEWORDER").style.display = "none";
-  document.getElementById("orders-viewOrder-DELETEBUTTON").innerHTML = "Delete Order"
-  document.getElementById("orders-viewOrder-DELETEBUTTON").style.borderColor = "var(--colDark)"
+async function BackOrderSave() {
+  hasHadEdits = false;
+  await BackOrder();
+}
 
-  // Close loading screen
-  await closeLoading();
-
-  changingPages = false;
+async function ExitCancel() {
+  document.getElementById("orders-savePopup").style.display = "none";
+  document.getElementById("ordersDEFAULT").style.removeProperty("position");
+  document.getElementById("ordersNEWORDER").style.removeProperty("position");
+  document.getElementById("ordersVIEWORDER").style.removeProperty("position");
 }
 
 async function SubmitNewOrder() {
@@ -344,7 +399,7 @@ async function ViewOrder(orderID) {
     document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateCompletedTitle").style.display = "block";
     document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-UPDATEBUTTON").style.display = "none";
     document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-DELETEBUTTON").style.display = "none";
-    document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-COMPLETEBUTTON").style.display = "none";
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-COMPLETEBUTTON").innerHTML = "Uncomplete Order";
 
     document.getElementById("orders-viewOrder-orderNumber").disabled = true;
     document.getElementById("orders-viewOrder-customerName").disabled = true;
@@ -360,7 +415,7 @@ async function ViewOrder(orderID) {
     document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-dateCompletedTitle").style.display = "none";
     document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-UPDATEBUTTON").style.display = "block";
     document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-DELETEBUTTON").style.display = "block";
-    document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-COMPLETEBUTTON").style.display = "block";
+    document.querySelector("#ordersVIEWORDER").querySelector("#orders-viewOrder-COMPLETEBUTTON").innerHTML = "Complete Order";
 
     document.getElementById("orders-viewOrder-orderNumber").disabled = false;
     document.getElementById("orders-viewOrder-customerName").disabled = false;
@@ -443,9 +498,15 @@ async function CompleteOrder(orderID) {
 
 
   //upload to firebase
-  await updateDoc(doc(db, "orders", orderID) , {
-    dateCompleted: Timestamp.fromDate(new Date())
-  })
+  if (document.getElementById("orders-viewOrder-COMPLETEBUTTON").innerHTML == "Uncomplete Order") {
+    await updateDoc(doc(db, "orders", orderID) , { 
+      dateCompleted: deleteField()
+    })
+  } else {
+    await updateDoc(doc(db, "orders", orderID) , {
+      dateCompleted: Timestamp.fromDate(new Date())
+    })
+  }
   
   await wait(pagesLoadingTime);
   window.location.reload();
@@ -465,7 +526,7 @@ async function ViewAllOrders() {
   }
 }
 
-const AllFunctions = { NewOrder, BackOrder, SubmitNewOrder, ViewOrder, UpdateOrder, DeleteOrder, CompleteOrder, ViewAllOrders }
+const AllFunctions = { NewOrder, BackOrder, BackOrderSave, ExitCancel, SubmitNewOrder, ViewOrder, UpdateOrder, DeleteOrder, CompleteOrder, ViewAllOrders }
 
 document.getElementById("orders-defaultOrder-searchBox").addEventListener("input", async function() {
 
