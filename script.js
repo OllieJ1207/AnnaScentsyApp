@@ -169,7 +169,7 @@ document.addEventListener("DOMContentLoaded", async function (event) {
       if (doc.id !== "hidden") {
         
         //add order to array if it was ordered in the last 30 days
-        if (doc.data().dateOrdered.toDate() > new Date(new Date().setDate(new Date().getDate() - 30))) {
+        if (doc.data().dateOrdered.toDate() > new Date(new Date().setDate(new Date().getDate() - 60))) {
           ordersArray.push(doc);
           
         } else if (LoadAll == true) {
